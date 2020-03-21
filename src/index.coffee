@@ -136,7 +136,7 @@ module.exports.VCalendar = class VCalendar extends VComponent
     name: 'VCALENDAR'
 
     constructor: (options) ->
-        super
+        super options
         @vtimezones = {}
 
     validate: ->
@@ -508,9 +508,11 @@ module.exports.VEvent = class VEvent extends VComponent
         @addRawField 'UID', @model.uid
         @addRawField 'DTSTAMP', stampDate.format VEvent.icalDTUTCFormat
 
-        @addRawField fieldStart, moment(@model.startDate).format formatStart
+        fieldStartValue = moment(@model.startDate).tz(timezoneStart || 'UTC')
+        @addRawField fieldStart, fieldStartValue.format formatStart
         if @model.endDate?
-            @addRawField fieldEnd, moment(@model.endDate).format formatEnd
+            fieldEndValue = moment(@model.endDate).tz(timezoneEnd || 'UTC')
+            @addRawField fieldEnd, fieldEndValue.format formatEnd
 
         if @model.attendees?
             for attendee in @model.attendees
@@ -745,7 +747,7 @@ module.exports.VTimezone = class VTimezone extends VComponent
 
     # constructor: (timezone) ->
     constructor: (options) ->
-        super
+        super options
         # During parsing, VTimezone are initialized without any property,
         # so we skip the processing below
         if not options
@@ -783,7 +785,7 @@ module.exports.VStandard = class VStandard extends VComponent
     name: 'STANDARD'
 
     constructor: (options) ->
-        super
+        super options
         # During parsing, VStandard are initialized without any property,
         # so we skip the processing below
         if not options
@@ -803,7 +805,7 @@ module.exports.VDaylight = class VDaylight extends VComponent
     name: 'DAYLIGHT'
 
     constructor: (options) ->
-        super
+        super options
         # During parsing, VDaylight are initialized without any property,
         # so we skip the processing below
         if not options
